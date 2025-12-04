@@ -38,4 +38,4 @@ jobs:
       run: |
         ls -la
         pwd
-        python -m pytest -v tests/apiRun pytest
+        python -m pytest -v tests
