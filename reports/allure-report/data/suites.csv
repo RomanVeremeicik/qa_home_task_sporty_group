@@ -1,0 +1,16 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"","42","test_dog_api_random_image_message_is_url[3]","tests.api","2025-12-04","passed","2025-12-04","","test_public_apis","",""
+"","111","test_agify_returns_name_and_age[olga]","tests.api","2025-12-04","passed","2025-12-04","","test_public_apis","",""
+"","109","test_agify_returns_name_and_age[juan]","tests.api","2025-12-04","passed","2025-12-04","","test_public_apis","",""
+"","24","test_pokemon_api_get_pokemon_has_name_and_types[charizard]","tests.api","2025-12-04","passed","2025-12-04","","test_public_apis","",""
+"","623","test_agify_returns_name_and_age[michael]","tests.api","2025-12-04","passed","2025-12-04","","test_public_apis","",""
+"","42","test_dog_api_random_image_message_is_url[1]","tests.api","2025-12-04","passed","2025-12-04","","test_public_apis","",""
+"","25783","test_twitch_mobile_streamer_selection","tests.web","2025-12-04","passed","2025-12-04","","test_twitch_search","",""
+"
+POST https://reqres.in/api/users
+- retry on transient failures
+- if we consistently get 403 (remote policy/rate-limit), skip the test
+","8043","test_reqres_create_user_post","tests.api","2025-12-04","skipped","2025-12-04","","test_public_apis","",""
+"","323","test_dog_api_list_all_breeds","tests.api","2025-12-04","passed","2025-12-04","","test_public_apis","",""
+"","310","test_pokemon_api_get_pokemon_has_name_and_types[pikachu]","tests.api","2025-12-04","passed","2025-12-04","","test_public_apis","",""
+"","45","test_pokemon_api_get_pokemon_has_name_and_types[bulbasaur]","tests.api","2025-12-04","passed","2025-12-04","","test_public_apis","",""

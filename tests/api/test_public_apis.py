@@ -1,17 +1,15 @@
-# tests/api/test_public_apis.py
+"""
+Config , use client fixture from conftest.py; TIMEOUT handled there.
+These tests use full URLs to avoid base_url coupling.
+tests/api/test_public_apis.py
+"""
+import time
 import pytest
 
-# =========================
-# Config
-# =========================
-# Use client fixture from conftest.py; TIMEOUT handled there.
-# These tests use full URLs to avoid base_url coupling.
 
-# -------------------------
-# 1) Dog CEO: list all breeds
-# -------------------------
 @pytest.mark.api
 def test_dog_api_list_all_breeds(client):
+    """Dog CEO: list all breeds, URL and status code 200"""
     url = "https://dog.ceo/api/breeds/list/all"
     r = client.get(url)
     assert r.status_code == 200, f"Expected 200, got {r.status_code}"
@@ -21,12 +19,11 @@ def test_dog_api_list_all_breeds(client):
     # At least one well-known breed present
     assert "hound" in j["message"] or "retriever" in j["message"] or len(j["message"]) > 0
 
-# -------------------------
-# 2) Dog CEO: random image returns URL (basic validation)
-# -------------------------
+
 @pytest.mark.api
 @pytest.mark.parametrize("count", [1, 3])
 def test_dog_api_random_image_message_is_url(client, count):
+    """Dog CEO: get random image message from url"""
     url = f"https://dog.ceo/api/breeds/image/random/{count}"
     r = client.get(url)
     assert r.status_code == 200
@@ -41,12 +38,11 @@ def test_dog_api_random_image_message_is_url(client, count):
         assert isinstance(message, str)
         assert message.startswith("http://") or message.startswith("https://")
 
-# -------------------------
-# 3) Agify: predict age by name
-# -------------------------
+
 @pytest.mark.api
 @pytest.mark.parametrize("name", ["michael", "olga", "juan"])
 def test_agify_returns_name_and_age(client, name):
+    """Agify: prediction of age by name"""
     url = "https://api.agify.io"
     r = client.get(url, params={"name": name})
     assert r.status_code == 200
@@ -57,26 +53,6 @@ def test_agify_returns_name_and_age(client, name):
         assert isinstance(j["age"], (int, float))
         assert j["age"] >= 0
 
-# -------------------------
-# 4) ReqRes: create user (POST) -> 201 + response contains id
-# -------------------------
-@pytest.mark.api
-def test_reqres_create_user_post(client):
-    url = "https://reqres.in/api/users"
-    payload = {"name": "automation", "job": "qa"}
-    r = client.post(url, json=payload)
-    assert r.status_code == 201, f"Expected 201, got {r.status_code}"
-    j = r.json()
-    assert j.get("name") == payload["name"]
-    assert j.get("job") == payload["job"]
-    assert "id" in j and isinstance(j["id"], str)
-    assert "createdAt" in j
-
-# -------------------------
-# 5) JSONPlaceholder: posts list and specific post schema
-# -------------------------
-import time
-import pytest
 
 @pytest.mark.api
 def test_reqres_create_user_post(client):
@@ -98,7 +74,7 @@ def test_reqres_create_user_post(client):
     last_status = None
     last_response = None
 
-    for attempt in range(1, max_attempts + 1):
+    for _ in range(1, max_attempts + 1):
         try:
             r = client.post(url, json=payload, headers=headers)
             last_status = r.status_code
@@ -124,7 +100,7 @@ def test_reqres_create_user_post(client):
                 continue
             # otherwise break and fail
             break
-        except Exception as ex:
+        except ImportError:
             # network glitch — retry
             last_response = None
             last_status = None
@@ -134,7 +110,8 @@ def test_reqres_create_user_post(client):
 
     # after attempts: decide result
     if last_status == 403:
-        pytest.skip("ReqRes returned 403 Forbidden consistently — external service policy/limiting (skipping test).")
+        pytest.skip("ReqRes returned 403 Forbidden consistently —\
+        external service policy/limiting (skipping test).")
     # If we have a last_response, raise informative assertion
     if last_response is not None:
         pytest.fail(f"Unexpected status {last_status}; response body: {last_response.text}")
@@ -142,12 +119,10 @@ def test_reqres_create_user_post(client):
         pytest.fail("Request to ReqRes failed repeatedly (no response).")
 
 
-# -------------------------
-# 6) Pokemon API: get pokemon by name and validate types
-# -------------------------
 @pytest.mark.api
 @pytest.mark.parametrize("pokemon", ["pikachu", "charizard", "bulbasaur"])
 def test_pokemon_api_get_pokemon_has_name_and_types(client, pokemon):
+    """Pokemon API: get pokemon by name and validate types"""
     url = f"https://pokeapi.co/api/v2/pokemon/{pokemon}"
     r = client.get(url)
     if r.status_code == 429:
@@ -159,4 +134,3 @@ def test_pokemon_api_get_pokemon_has_name_and_types(client, pokemon):
     assert isinstance(types, list) and len(types) >= 1
     for t in types:
         assert "type" in t and "name" in t["type"]
-
