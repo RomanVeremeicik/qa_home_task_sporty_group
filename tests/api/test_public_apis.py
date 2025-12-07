@@ -3,8 +3,13 @@ Config , use client fixture from conftest.py; TIMEOUT handled there.
 These tests use full URLs to avoid base_url coupling.
 tests/api/test_public_apis.py
 """
+import logging
 import time
+
 import pytest
+from requests.exceptions import RequestException
+
+logger = logging.getLogger(__name__)
 
 
 @pytest.mark.api
@@ -74,7 +79,7 @@ def test_reqres_create_user_post(client):
     last_status = None
     last_response = None
 
-    for _ in range(1, max_attempts + 1):
+    for attempt in range(1, max_attempts + 1):
         try:
             r = client.post(url, json=payload, headers=headers)
             last_status = r.status_code
@@ -89,19 +94,22 @@ def test_reqres_create_user_post(client):
                 return
             # If service responds with 403 (possible protection), retry a little then decide
             if r.status_code == 403:
+                logger.warning("Attempt %s/%s: received 403 from %s", attempt, max_attempts, url)
                 # small backoff then retry
                 time.sleep(backoff)
                 backoff *= 2
                 continue
             # for other 5xx statuses, allow retry as well
             if 500 <= r.status_code < 600:
+                logger.warning("Attempt %s/%s: received %s from %s, retrying", attempt, max_attempts, r.status_code, url)
                 time.sleep(backoff)
                 backoff *= 2
                 continue
             # otherwise break and fail
             break
-        except Exception as e:
-            # network glitch — retry
+        except (RequestException, OSError, TimeoutError) as exc:
+            # network/IO glitch — retry
+            logger.warning("Network/IO error on attempt %s/%s: %s", attempt, max_attempts, exc)
             last_response = None
             last_status = None
             time.sleep(backoff)
@@ -110,8 +118,9 @@ def test_reqres_create_user_post(client):
 
     # after attempts: decide result
     if last_status == 403:
-        pytest.skip("ReqRes returned 403 Forbidden consistently —\
-        external service policy/limiting (skipping test).")
+        pytest.skip(
+            "ReqRes returned 403 Forbidden consistently — external service policy/limiting (skipping test)."
+        )
     # If we have a last_response, raise informative assertion
     if last_response is not None:
         pytest.fail(f"Unexpected status {last_status}; response body: {last_response.text}")
