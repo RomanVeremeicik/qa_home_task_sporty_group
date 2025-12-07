@@ -100,7 +100,7 @@ def test_reqres_create_user_post(client):
                 continue
             # otherwise break and fail
             break
-        except ImportError:
+        except Exception as e:
             # network glitch — retry
             last_response = None
             last_status = None

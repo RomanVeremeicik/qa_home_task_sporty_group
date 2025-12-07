@@ -2,6 +2,7 @@
 
 import time
 import json
+from logging import exception
 from pathlib import Path
 import allure
 from selenium import webdriver
@@ -34,7 +35,7 @@ class TestTwitchStepByStep:
         chrome_options = Options()
         try:
             chrome_options.add_experimental_option("mobileEmulation", {"deviceName": "iPhone X"})
-        except ValueError:
+        except Exception as e:
             pass
         chrome_options.add_argument("--disable-notifications")
         chrome_options.add_argument("--no-sandbox")
@@ -44,7 +45,7 @@ class TestTwitchStepByStep:
         cls.driver = webdriver.Chrome(options=chrome_options)
         try:
             cls.driver.set_window_size(375, 812)
-        except ValueError:
+        except Exception as e:
             pass
         cls.driver.implicitly_wait(2)
 
@@ -59,7 +60,7 @@ class TestTwitchStepByStep:
         """
         try:
             cls.driver.quit()
-        except ValueError:
+        except Exception as e:
             pass
 
 
@@ -83,7 +84,7 @@ class TestTwitchStepByStep:
                     json.dump(cookies, f, ensure_ascii=False, indent=2)
                 allure.attach.file(str(path), name="cookies_json",\
                 attachment_type=allure.attachment_type.JSON)
-            except ValueError:
+            except Exception as e:
                 pass
             assert True
 
@@ -131,7 +132,7 @@ class TestTwitchStepByStep:
                     attachment_type=allure.attachment_type.PNG)
                     allure.attach(html.read_text(encoding="utf-8"), name="click_failed_html",
                     attachment_type=allure.attachment_type.TEXT)
-                except ValueError:
+                except Exception as e:
                     pass
             assert clicked, "Could not click a streamer"
 
