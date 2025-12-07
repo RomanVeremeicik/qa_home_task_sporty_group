@@ -15,7 +15,7 @@ A demo GIF showing the UI test running locally (required by assignment):
 
 #  Project Structure
 
-📦 qa-twitch-mobile-test
+ qa-twitch-mobile-test
 │
 ├── .github/
 │   └── workflows/
@@ -54,7 +54,7 @@ A demo GIF showing the UI test running locally (required by assignment):
 | UI-01     | Open Twitch homepage                  | Navigate to `https://twitch.tv`                    | Homepage loads fully                    | DOM ready state                            |
 | UI-02     | Close cookies                         | Detect & click **Accept Cookies** button           | Cookies modal disappears                | Element visibility + clickability          |
 | UI-03     | Open search bar                       | Click search icon                                  | Search input becomes visible            | Element visibility                         |
-| **UI-04** | **Enter search query "StarCraft II"** | Type `"StarCraft II"` into search field and submit | Search results for StarCraft II appear  | Input value assertion + URL contains query |
+| UI-04     | Enter search query "StarCraft II"     | Type `"StarCraft II"` into search field and submit | Search results for StarCraft II appear  | Input value assertion + URL contains query |
 | UI-05     | Scroll down 2 times                   | Execute JS scroll actions                          | Additional streamers load               | JS scroll + DOM diff                       |
 | UI-06     | Select streamer                       | Click first streamer in results                    | Successfully navigates to streamer page | URL change + click success                 |
 | UI-07     | Wait for streamer to load             | Wait for video container to appear                 | Player becomes visible                  | Presence of player element                 |
@@ -63,7 +63,7 @@ A demo GIF showing the UI test running locally (required by assignment):
 
 ---
 
-# 🟡 API Test Cases (Required by assignment)
+# API Test Cases (Required by assignment)
 
 | ID | API | Description | Validation |
 |----|-----|-------------|------------|
