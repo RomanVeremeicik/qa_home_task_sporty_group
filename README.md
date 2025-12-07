@@ -8,14 +8,15 @@ This repository contains automated tests for:
 
 A demo GIF showing the UI test running locally (required by assignment):
 
-📌 *Place your GIF here:*  
-`docs/demo.gif`
+DEMO GIF 
+
+Download link - https://files.catbox.moe/v9cgbm.gif
 
 ---
 
 #  Project Structure
 
- qa-twitch-mobile-test
+ qa_home_task_sporty_group
 │
 ├── .github/
 │   └── workflows/
@@ -65,13 +66,16 @@ A demo GIF showing the UI test running locally (required by assignment):
 
 # API Test Cases (Required by assignment)
 
-| ID | API | Description | Validation |
-|----|-----|-------------|------------|
-| API-01 | Dog API | GET all breeds | status=200, response JSON has dictionary |
-| API-02 | Dog API | GET random image | "message" contains valid URL |
-| API-03 | Agify | Predict age | JSON has fields: name, age, count |
-| API-04 | ReqRes | Create user | status=201, ID + timestamp returned |
-| API-05 | Pokémon API | Get Pokémon | Validate name + array of types |
+| ID         | Test Case                   | Steps                                     | Expected Result             | Validation                                        |
+| ---------- | --------------------------- | ----------------------------------------- | --------------------------- | ------------------------------------------------- |
+| **API-01** | Dog API — List all breeds   | GET `https://dog.ceo/api/breeds/list/all` | Status OK; breeds returned  | 200; `status=success`; `message` dict; ≥1 breed   |
+| **API-02** | Dog API — Random image (1)  | GET `/random/1`                           | One image URL returned      | 200; string URL; starts with http                 |
+| **API-03** | Dog API — Random images (3) | GET `/random/3`                           | 3 image URLs returned       | 200; list len=3; each URL valid                   |
+| **API-04** | Agify — Predict age         | GET `?name=<name>`                        | Name matches; age returned  | 200; `name` equals input; `age` is number or null |
+| **API-05** | ReqRes — Create user        | POST payload `{name, job}`                | User created                | 200/201; fields match; has `id` + `createdAt`     |
+| **API-06** | ReqRes — Retry handling     | Retry POST on 403/5xx                     | Pass, skip, or fail cleanly | Backoff retries; skip on constant 403             |
+| **API-07** | Pokémon API — Pokémon types | GET `/pokemon/<name>`                     | Name + list of types        | 200; correct `name`; `types` list ≥1              |
+
 
 ---
 
@@ -111,3 +115,38 @@ This satisfies the assignment requirement:
 # Running Tests
 
 ### Install dependencies
+
+pip install -r requirements.txt
+
+### Run tests with Allure output
+
+pytest --alluredir=allure-results
+
+### Generate and open Allure report
+
+allure generate allure-results -o allure-report --clean
+allure open allure-report
+
+# CI/CD
+
+- This project includes a GitHub Actions workflow that:
+
+- installs dependencies
+
+- runs Pytest
+
+- generates Allure results
+
+- uploads them as CI artifacts
+
+# Notes
+
+This project was completed as part of a QA Automation Home Task and demonstrates:
+
+- practical knowledge of UI automation
+
+- API test design
+
+- reporting
+
+- engineering approach to test architecture
